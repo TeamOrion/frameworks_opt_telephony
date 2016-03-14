@@ -1395,14 +1395,6 @@ public abstract class DcTrackerBase extends Handler {
 
             if (mUserDataEnabled != enabled) {
                 mUserDataEnabled = enabled;
-
-                // For single SIM phones, this is a per phone property.
-                if (TelephonyManager.getDefault().getSimCount() == 1) {
-                    Settings.Global.putInt(mResolver, Settings.Global.MOBILE_DATA, enabled ? 1 : 0);
-                } else {
-                    Settings.Global.putInt(mResolver, Settings.Global.MOBILE_DATA + subId,
-                            enabled ? 1 : 0);
-                }
                 if (getDataOnRoamingEnabled() == false &&
                         mPhone.getServiceState().getDataRoaming() == true) {
                     if (enabled) {
