@@ -406,7 +406,12 @@ public class DctController extends Handler {
                 + ", activePhoneId=" + activePhoneId);
 
         if (requestedPhoneId == INVALID_PHONE_INDEX) {
-            // we have no network request - don't bother with this
+            // either we have no network request
+            // or there is no valid subscription at the moment
+            if (activePhoneId != INVALID_PHONE_INDEX) {
+                // detatch so we can try connecting later
+                mDcSwitchAsyncChannel[activePhoneId].disconnectAll();
+            }
             return;
         }
 
@@ -555,24 +560,12 @@ public class DctController extends Handler {
         int priority = -1;
         int subId;
 
-        int activePhoneId = -1;
-        for (int i = 0; i < mDcSwitchStateMachine.length; i++) {
-            if (!mDcSwitchAsyncChannel[i].isIdleSync()) {
-                activePhoneId = i;
-                break;
-            }
-        }
-
         for (RequestInfo requestInfo : mRequestInfos.values()) {
             logd("getTopPriorityRequestPhoneId requestInfo=" + requestInfo);
             if (requestInfo.priority > priority) {
                 priority = requestInfo.priority;
                 topSubId = requestInfo.request.networkCapabilities.getNetworkSpecifier();
                 retRequestInfo = requestInfo;
-            } else if (priority == requestInfo.priority) {
-                if (requestInfo.executedPhoneId == activePhoneId) {
-                    topSubId = requestInfo.request.networkCapabilities.getNetworkSpecifier();
-                }
             }
         }
         if (TextUtils.isEmpty(topSubId)) {
