@@ -227,18 +227,6 @@ public class SubscriptionInfoUpdater extends Handler {
                     logd("Ignoring simStatus: " + simStatus);
                 }
             }
-            
-            if (isAllIccIdQueryDone()) {
-                if (IccCardConstants.INTENT_VALUE_ICC_LOCKED.equals(simStatus)) {
-                    mLockedSims.set(slotId);
-                    update(slotId);
-                } else if (IccCardConstants.INTENT_VALUE_ICC_READY.equals(simStatus)
-                        || IccCardConstants.INTENT_VALUE_ICC_LOADED.equals(simStatus)) {
-                    mLockedSims.clear(slotId);
-                    update(slotId);
-                }
-            }
-            
             logd("[Receiver]-");
         }
     };
